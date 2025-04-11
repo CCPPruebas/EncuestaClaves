@@ -75,5 +75,9 @@ else:
             actividades_valiosas,
             comentario,
         ]
-        sheet.append_row(fila)
+
+        # Convertir todos los valores a string para evitar errores y desplazamientos en las celdas
+        fila_str = [str(campo) if campo is not None else "" for campo in fila]
+
+        sheet.append_row(fila_str)
         st.success("✅ ¡Respuesta guardada en Google Sheets!")
