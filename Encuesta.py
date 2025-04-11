@@ -2,25 +2,21 @@ import streamlit as st
 import pandas as pd
 import gspread
 from datetime import datetime
-import toml
 from oauth2client.service_account import ServiceAccountCredentials
 
 st.title("Encuesta de participación y vocación")
 
 # === Autenticación con Google Sheets ===
-# Cargar las credenciales desde el secreto TOML de Streamlit Cloud
-credenciales_toml = st.secrets["gspread"]  # Accede a las credenciales desde los secretos de Streamlit Cloud
-if credenciales_toml is None:
+# Cargar las credenciales desde el secreto JSON de Streamlit Cloud
+credenciales_json = st.secrets["gspread"]  # Accede a las credenciales desde los secretos de Streamlit Cloud
+if credenciales_json is None:
     st.error("No se encontraron credenciales en los secretos de Streamlit Cloud.")
 else:
-    # Usamos toml.loads() para cargar el contenido de las credenciales que está en formato TOML
-    creds_dict = toml.loads(credenciales_toml)
-
     # Definir el alcance de la API
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
     # Crear credenciales utilizando el diccionario de las credenciales en formato JSON
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credenciales_json, scope)
 
     # Autorizar y conectar a Google Sheets
     client = gspread.authorize(creds)
