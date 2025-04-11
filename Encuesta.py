@@ -81,4 +81,3 @@ else:
         ]
         sheet.append_row(fila)
         st.success("✅ ¡Respuesta guardada en Google Sheets!")
-
