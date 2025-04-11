@@ -7,18 +7,12 @@ from oauth2client.service_account import ServiceAccountCredentials
 st.title("Encuesta de participación y vocación")
 
 # === Autenticación con Google Sheets ===
-# Cargar las credenciales desde el secreto JSON de Streamlit Cloud
-credenciales_json = st.secrets["gspread"]  # Accede a las credenciales desde los secretos de Streamlit Cloud
+credenciales_json = st.secrets["gspread"]
 if credenciales_json is None:
     st.error("No se encontraron credenciales en los secretos de Streamlit Cloud.")
 else:
-    # Definir el alcance de la API
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-
-    # Crear credenciales utilizando el diccionario de las credenciales en formato JSON
     creds = ServiceAccountCredentials.from_json_keyfile_dict(credenciales_json, scope)
-
-    # Autorizar y conectar a Google Sheets
     client = gspread.authorize(creds)
     sheet = client.open("Respuestas Encuesta Vocacional").sheet1
 
@@ -75,9 +69,9 @@ else:
             actividades_valiosas,
             comentario,
         ]
-
-        # Convertir todos los valores a string para evitar errores y desplazamientos en las celdas
         fila_str = [str(campo) if campo is not None else "" for campo in fila]
 
-        sheet.append_row(fila_str)
-        st.success("✅ ¡Respuesta guardada en Google Sheets!")
+        # Inserta la fila en la segunda posición, justo debajo de los encabezados
+        sheet.insert_row(fila_str, index=2)
+
+        st.success("✅ ¡Respuesta guardada en la primera columna correctamente!")
