@@ -18,6 +18,10 @@ else:
     client = gspread.authorize(creds)
     sheet = client.open("Respuestas Encuesta Vocacional").sheet1
 
+    # 👉 Se pregunta fuera del formulario para que se actualice a tiempo
+    st.subheader("📈 Estado actual")
+    sigue_asistiendo = st.radio("¿Sigues asistiendo regularmente a actividades?", ["Sí", "No"], horizontal=True)
+
     with st.form("formulario_encuesta", clear_on_submit=True):
         st.subheader("🧍 Datos personales")
         col1, col2 = st.columns(2)
@@ -48,12 +52,14 @@ else:
         acompanamiento = st.radio("¿Has recibido acompañamiento personal?", ["Sí", "No"], horizontal=True)
 
         st.divider()
-        st.subheader("📈 Estado actual")
+        st.markdown(f"**¿Sigues asistiendo regularmente a actividades?** {sigue_asistiendo}")
+        razon_abandono = ""
+        if sigue_asistiendo == "No":
+            razon_abandono = st.text_area("¿Por qué ya no asistes?")
+
         pidio_admision = st.radio("¿Has pedido la admisión en la Obra?", ["Sí", "No"], horizontal=True)
         fecha_admision = st.date_input("¿Cuándo pediste la admisión?", disabled=(pidio_admision == "No"))
-        sigue_asistiendo = st.radio("¿Sigues asistiendo regularmente a actividades?", ["Sí", "No"], horizontal=True)
 
-        razon_abandono = st.text_area("Si ya no asistes, ¿por qué?", disabled=(sigue_asistiendo == "Sí"))
         actividades_valiosas = st.text_area("¿Qué actividades te parecieron más impactantes?")
         comentario = st.text_area("Comentarios adicionales")
 
@@ -77,7 +83,7 @@ else:
             pidio_admision,
             str(fecha_admision) if pidio_admision == "Sí" else "",
             sigue_asistiendo,
-            razon_abandono if sigue_asistiendo == "No" else "",
+            razon_abandono,
             actividades_valiosas,
             comentario,
         ]
@@ -105,4 +111,3 @@ else:
                 st.write("**Razón de abandono:**", razon_abandono)
             st.write("**Actividades impactantes:**", actividades_valiosas)
             st.write("**Comentarios adicionales:**", comentario)
-
